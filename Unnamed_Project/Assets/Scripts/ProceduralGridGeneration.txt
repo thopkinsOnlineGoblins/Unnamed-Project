@@ -1,0 +1,29 @@
+using UnityEngine;
+
+public class GenerateGrid : MonoBehaviour
+{
+
+    public GameObject blockGameObject;
+
+    private int worldSizeX = 10;	//width of grid
+
+    private int worldSizeZ = 10;	//height of grid
+
+    private int gridOffset = 2;		//grid offset
+
+    // Start is called before the first frame update
+
+    void Start()
+    {
+	for(int x = 0; x < worldSizeX; x++ ) {
+	    for(int z = 0; z < worldSizeZ; z++) {
+	
+		Vector3 pos = new Vector3(x * gridOffset, 0, z * gridOffset);
+
+		GameObject block = Instantiate(blockGameObject, pos, Quaternion.identity) as GameObject;
+
+		block.transform.SetParent(this.transform);
+	     }
+	   }
+	}
+}
