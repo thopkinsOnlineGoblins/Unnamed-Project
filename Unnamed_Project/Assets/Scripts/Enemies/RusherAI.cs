@@ -15,6 +15,10 @@ public class RusherAI : MonoBehaviour
     public float contactDamage = 10f;
     public float damageInterval = 0.6f;
 
+    [Header("Sound Effects")]
+    public EnemySoundConfig sounds;
+    public AudioSource audioSource;
+
     NavMeshAgent _agent;
     Transform _player;
     float _damageTimer;
@@ -45,7 +49,6 @@ public class RusherAI : MonoBehaviour
 
         float dist = Vector3.Distance(transform.position, _player.position);
 
-        // Stop when adjacent — prevents NavMeshAgent from pushing the player into walls
         if (dist > stopRange + 0.1f)
         {
             _agent.isStopped = false;
@@ -60,6 +63,7 @@ public class RusherAI : MonoBehaviour
         if (_damageTimer <= 0f && dist <= contactRange)
         {
             _damageTimer = damageInterval;
+            PlaySound(sounds?.attackSound);
             _player.GetComponent<HealthComponent>()?.TakeDamage(contactDamage);
         }
     }
@@ -68,6 +72,16 @@ public class RusherAI : MonoBehaviour
     {
         _isDead = true;
         _agent.enabled = false;
+        PlaySound(sounds?.deathSound);
         Destroy(gameObject, 0.1f);
+    }
+
+    void PlaySound(AudioClip clip)
+    {
+        if (clip == null) return;
+        if (audioSource != null)
+            audioSource.PlayOneShot(clip);
+        else
+            AudioSource.PlayClipAtPoint(clip, transform.position);
     }
 }

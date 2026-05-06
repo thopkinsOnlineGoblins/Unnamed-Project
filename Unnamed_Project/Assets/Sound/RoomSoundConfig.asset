@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 853e6ccf119b4614ba6b7005b7175bd1, type: 3}
+  m_Name: RoomSoundConfig
+  m_EditorClassIdentifier: 
+  doorCloseSound: {fileID: 8300000, guid: 05bd828c7921b9a4d9c58d167e8aefce, type: 3}
+  spawnSound: {fileID: 8300000, guid: 9a42098d2a0103e4b99f3009e53f08b0, type: 3}
+  waveCompleteSound: {fileID: 8300000, guid: 655d8243769bcef419a619938be2f5a3, type: 3}
+  roomCompleteSound: {fileID: 8300000, guid: 32a824687be7fe244b1fc376f6221d35, type: 3}

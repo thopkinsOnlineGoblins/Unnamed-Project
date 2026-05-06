@@ -12,13 +12,17 @@ public class SwingerAI : MonoBehaviour
 
     [Header("Attack")]
     public float attackRange = 2.8f;
-    public float attackDamage = 25f;
+    public float attackDamage = 12f;
     public float swingArcAngle = 100f;
 
     [Header("Timing")]
     public float windupDuration = 1.2f;
     public float swingDuration = 0.25f;
     public float cooldownDuration = 1.8f;
+
+    [Header("Sound Effects")]
+    public EnemySoundConfig sounds;
+    public AudioSource audioSource;
 
     enum State { Approach, Windup, Swing, Cooldown }
     State _state = State.Approach;
@@ -83,6 +87,9 @@ public class SwingerAI : MonoBehaviour
 
     void EnterState(State next, float duration)
     {
+        // Play windup sound exactly when entering the Windup state
+        if (next == State.Windup) PlaySound(sounds?.windupSound);
+
         _state = next;
         _stateTimer = duration;
     }
@@ -90,6 +97,7 @@ public class SwingerAI : MonoBehaviour
     void Swing()
     {
         EnterState(State.Swing, swingDuration);
+        PlaySound(sounds?.attackSound);
 
         Collider[] hits = Physics.OverlapSphere(transform.position, attackRange);
         foreach (var hit in hits)
@@ -113,7 +121,17 @@ public class SwingerAI : MonoBehaviour
     {
         _isDead = true;
         _agent.enabled = false;
+        PlaySound(sounds?.deathSound);
         Destroy(gameObject, 0.1f);
+    }
+
+    void PlaySound(AudioClip clip)
+    {
+        if (clip == null) return;
+        if (audioSource != null)
+            audioSource.PlayOneShot(clip);
+        else
+            AudioSource.PlayClipAtPoint(clip, transform.position);
     }
 
     void OnDrawGizmosSelected()

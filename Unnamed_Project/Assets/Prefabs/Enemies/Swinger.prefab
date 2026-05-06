@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5314089881783147572}
   - component: {fileID: 2530585340359002189}
   - component: {fileID: 3414054727951244875}
+  - component: {fileID: 6034502233961785651}
   m_Layer: 0
   m_Name: Swinger
   m_TagString: Enemy
@@ -160,6 +161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0425eba5dd9e0834db5285b53da4d73b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 2.5
   approachStopDistance: 2.5
   attackRange: 2.8
   attackDamage: 25
@@ -167,3 +169,32 @@ MonoBehaviour:
   windupDuration: 1.2
   swingDuration: 0.25
   cooldownDuration: 1.8
+  sounds: {fileID: 11400000, guid: 0eb2a034873fcb14cb04975b84940b9c, type: 2}
+  audioSource: {fileID: 0}
+--- !u!54 &6034502233961785651
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 122395057295121930}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

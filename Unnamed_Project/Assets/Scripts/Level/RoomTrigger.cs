@@ -25,6 +25,10 @@ public class RoomTrigger : MonoBehaviour
     public float introDuration = 3.5f;
     public float introFadeTime = 0.5f;
 
+    [Header("Sound Effects")]
+    public RoomSoundConfig sounds;
+    public AudioSource audioSource;
+
     bool _activated;
     PlayerMovement _player;
     LockOnSystem _lockOn;
@@ -33,18 +37,23 @@ public class RoomTrigger : MonoBehaviour
     {
         if (_activated || !other.CompareTag("Player")) return;
         _activated = true;
-
         _player = other.GetComponentInParent<PlayerMovement>();
-        _lockOn  = other.GetComponentInParent<LockOnSystem>();
-        if (door != null) door.SetActive(true);
+        _lockOn = other.GetComponentInParent<LockOnSystem>();
+        if (door != null)
+        {
+            door.SetActive(true);
+            PlaySound(sounds?.doorCloseSound);
+        }
         StartCoroutine(RunRoom());
     }
 
     IEnumerator RunRoom()
     {
         for (int i = 0; i < waves.Count; i++)
+        {
             yield return StartCoroutine(RunWave(waves[i], i));
-
+            PlaySound(sounds?.waveCompleteSound);
+        }
         OpenDoor();
     }
 
@@ -59,8 +68,6 @@ public class RoomTrigger : MonoBehaviour
             yield return StartCoroutine(SpawnAndFight(wave, sp, isFirst: i == 0));
     }
 
-    // First enemy in a wave: freeze player, show intro card, then start combat.
-    // Subsequent enemies in the same wave: brief pause then straight to combat.
     IEnumerator SpawnAndFight(EnemyWave wave, Transform sp, bool isFirst)
     {
         if (isFirst)
@@ -73,9 +80,7 @@ public class RoomTrigger : MonoBehaviour
             yield return new WaitForSeconds(0.8f);
         }
 
-        // Snap spawn position to the nearest valid NavMesh point
         Vector3 spawnPos = sp.position;
-        Debug.DrawRay(sp.position, Vector3.up * 3f, Color.red, 10f);
         if (NavMesh.SamplePosition(sp.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
         {
             spawnPos = hit.position;
@@ -87,6 +92,7 @@ public class RoomTrigger : MonoBehaviour
 
         var go = Instantiate(wave.prefab, spawnPos, sp.rotation);
         FXHelper.SpawnBurst(spawnPos + Vector3.up * 0.8f, new Color(0.5f, 0f, 1f));
+        PlaySound(sounds?.spawnSound);
         _lockOn?.ForceTarget(go);
 
         bool dead = false;
@@ -113,6 +119,15 @@ public class RoomTrigger : MonoBehaviour
         }
     }
 
+    void PlaySound(AudioClip clip)
+    {
+        if (clip == null) return;
+        if (audioSource != null)
+            audioSource.PlayOneShot(clip);
+        else
+            AudioSource.PlayClipAtPoint(clip, transform.position);
+    }
+
     void SetFrozen(bool frozen)
     {
         if (_player != null) _player.IsFrozen = frozen;
@@ -121,6 +136,7 @@ public class RoomTrigger : MonoBehaviour
     void OpenDoor()
     {
         SetFrozen(false);
+        PlaySound(sounds?.roomCompleteSound);
         if (door != null) door.SetActive(false);
     }
 }
