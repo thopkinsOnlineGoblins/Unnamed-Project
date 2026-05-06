@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -72,8 +73,20 @@ public class RoomTrigger : MonoBehaviour
             yield return new WaitForSeconds(0.8f);
         }
 
-        var go = Instantiate(wave.prefab, sp.position, sp.rotation);
-        FXHelper.SpawnBurst(sp.position + Vector3.up * 0.8f, new Color(0.5f, 0f, 1f));
+        // Snap spawn position to the nearest valid NavMesh point
+        Vector3 spawnPos = sp.position;
+        Debug.DrawRay(sp.position, Vector3.up * 3f, Color.red, 10f);
+        if (NavMesh.SamplePosition(sp.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+        {
+            spawnPos = hit.position;
+        }
+        else
+        {
+            Debug.LogWarning($"[RoomTrigger] No NavMesh found within 3m of spawn point '{sp.name}' at {sp.position}. Enemy may not navigate correctly.");
+        }
+
+        var go = Instantiate(wave.prefab, spawnPos, sp.rotation);
+        FXHelper.SpawnBurst(spawnPos + Vector3.up * 0.8f, new Color(0.5f, 0f, 1f));
         _lockOn?.ForceTarget(go);
 
         bool dead = false;
@@ -87,7 +100,6 @@ public class RoomTrigger : MonoBehaviour
                 yield return StartCoroutine(RoomIntroUI.Instance.Show(wave.displayName, wave.description, introDuration, introFadeTime));
             else
                 yield return new WaitForSeconds(introDuration);
-
             SetFrozen(false);
         }
 
